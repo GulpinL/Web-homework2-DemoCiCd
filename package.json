@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "jest"
+    "test": "jest",
+    "build": ""
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "dependencies": {
     "@babel/preset-env": "^7.17.12",
