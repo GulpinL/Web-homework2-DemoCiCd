@@ -4,14 +4,26 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-const hbshelpers = require("handlebars-helpers");
-const session = require('express-session');
+// import "core-js/stable";
+// import "regenerator-runtime/runtime";
+// import '@babel/polyfill'
+// const hbshelpers = require("handlebars-helpers");
+// const session = require('express-session');
 const expressHandlebarsSections = require('express-handlebars-sections');
 var { engine, create  } = require("express-handlebars");
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var registerRouter = require('./routes/register');
+
+// const fakeDB = [
+//   {
+//     id: Math.floor(Math.random() * 100),
+//     email: "test@example.com",
+//   },
+// ];
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,7 +51,30 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+// app.get("/", (req, res) => {
+//   return res.status(200).json({ data: fakeDB });
+// });
+// app.use('/users', usersRouter);
+app.post('/users', async (req, res) => {
+  const { password, username } = req.body
+  if (!password || !username) {
+    res.sendStatus(400)
+    return
+  }
+
+  res.send({ userId: 0 })
+})
+
+app.use('/registerdemoci', registerRouter);
+
+
+
+
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
