@@ -34,8 +34,26 @@ const foods = [
 ];
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { foods});
-  // res.send('respond with a resource INDEX');
+  // res.render('index', { foods});
+
+    let { currentPage } = req.query;
+    if (!currentPage || isNaN(currentPage)) currentPage = 1;
+    else{
+      currentPage = parseInt(currentPage);
+    }
+
+    const numberFoodPerPage=3;
+    
+    // const count =await foodService.getNumberOfFoods();
+    const count=foods.length;
+    // const foods  =await foodService.getFoodsByFoodPerPage(currentPage,numberFoodPerPage);
+    const totalPages = Math.ceil(count / 2);//ITEMS_PER_PAGE=2
+    const nextPage = currentPage + 1;
+    const previousPage = currentPage - 1;
+    const pages= Array.from(Array(totalPages).keys()).map(i => i + 1);
+
+    res.render("index",{foods,currentPage,pages,nextPage,previousPage})   
+  
 });
 
 module.exports = router;

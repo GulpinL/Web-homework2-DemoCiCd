@@ -2,9 +2,19 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource long dep trai');
-  // res.sendStatus(400);
+router.post('/', (req, res, next) => {
+  if (!req.body.firstName) {
+    res.status(400).json('you need to pass a firstName');
+    return;
+  }
+//   res.sendStatus(202);// chinh ow day der dduojc FAIL
+  res.sendStatus(201);
 });
 
+router.get('/', (req, res, next) => {
+    
+    res.send("201");
+  });
 module.exports = router;
+
+

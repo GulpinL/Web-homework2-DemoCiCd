@@ -11,16 +11,13 @@ var logger = require('morgan');
 // const session = require('express-session');
 const expressHandlebarsSections = require('express-handlebars-sections');
 var { engine, create  } = require("express-handlebars");
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var registerRouter = require('./routes/register');
-
-// const fakeDB = [
-//   {
-//     id: Math.floor(Math.random() * 100),
-//     email: "test@example.com",
-//   },
-// ];
+// const foodRouter = require("./routes/food");
+const adminRouter = require("./routes/admin");
+// const authenticationRouter=require("./routes/authentication");
+const registerRouter = require('./routes/register');
 
 var app = express();
 
@@ -51,21 +48,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-
-// app.get("/", (req, res) => {
-//   return res.status(200).json({ data: fakeDB });
-// });
-// app.use('/users', usersRouter);
-app.post('/users', async (req, res) => {
-  const { password, username } = req.body
-  if (!password || !username) {
-    res.sendStatus(400)
-    return
-  }
-
-  res.send({ userId: 0 })
-})
-
+app.use("/user", usersRouter);
+// app.use("/food", foodRouter);
+app.use("/admin", adminRouter);
+// app.use('/authentication', authenticationRouter);
 app.use('/registerdemoci', registerRouter);
 
 
