@@ -1,55 +1,86 @@
+# version: 2.1
+
+# orbs:
+#   node: circleci/node@5.0.2
+#   heroku:  circleci/heroku@1.2.6 # Use the Heroku orb in your config
+
+
+# jobs:
+#   build:
+#     docker:
+#       - image: cimg/node:16.14.0
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           pkg-manager: yarn
+#       - run:
+#           name: Build app
+#           command: npm run build
+
+#   test:
+#     docker:
+#       - image: cimg/node:16.14.0
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           pkg-manager: yarn
+#       - run:
+#           name: Test app
+#           command: npm test
+#   example-job:
+#     docker:
+#       # replace with your preferred image
+#       - image: cimg/base:stable
+#     steps:
+#       - heroku/deploy-via-git:
+#           api-key: HEROKU_API_KEY 
+#           app-name: HEROKU_APP_NAME 
+#           branch: master 
+
+# workflows:
+#   build_and_test:
+#     jobs:
+#       - build
+#       - test:
+#           requires:
+#             - build
+#   heroku_deploy:
+#      jobs:
+#        - build
+#        - heroku/deploy-via-git:
+#            requires:
+#              - build # only run deploy-via-git job if the build job has completed
+#            filters:
+#              branches:
+#                only: master # only run deploy-via-git job on main branch
 version: 2.1
-
 orbs:
-  # node: circleci/node@5.0.2
-  heroku:  circleci/heroku@1.2.6 # Use the Heroku orb in your config
-
-
+  heroku: circleci/heroku@1.0.1
 jobs:
-  build:
-    docker:
-      - image: cimg/node:16.14.0
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: yarn
-      - run:
-          name: Build app
-          command: npm run build
-
   test:
     docker:
-      - image: cimg/node:16.14.0
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: yarn
-      - run:
-          name: Test app
-          command: npm test
-  example-job:
-    docker:
-      # replace with your preferred image
-      - image: cimg/base:stable
-    steps:
-      - heroku/deploy-via-git:
-          api-key: HEROKU_API_KEY 
-          app-name: HEROKU_APP_NAME 
-          branch: master 
+    - image: circleci/golang:1.13
 
+    working_directory: /go/src/github.com/codechaitu/api
+    environment:
+      GO111MODULE: "on"
+    steps:
+    - checkout
+    - run:
+        name: Get dependencies
+        command: |
+          go mod vendor
+    - run:
+       name: Run test cases
+       command: |
+          go test ./...
 workflows:
-  build_and_test:
+  test and deploy:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
-  heroku_deploy:
-     jobs:
-       - build
-       - heroku/deploy-via-git:
-           requires:
-             - build # only run deploy-via-git job if the build job has completed
-           filters:
-             branches:
-               only: master # only run deploy-via-git job on main branch
+    - test
+    - heroku/deploy-via-git:
+        requires:
+        - test
+        filters:
+          branches:
+            only: master
